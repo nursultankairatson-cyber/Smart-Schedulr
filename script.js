@@ -1,4 +1,4 @@
-const STORAGE_KEY = "googleStyleSchedule_v3";
+const STORAGE_KEY = "googleStyleSchedule_v4";
 
 const DAYS_RU = [
   "Воскресенье",
@@ -55,7 +55,7 @@ function saveState() {
 let state = loadState();
 let activeDayChip = "ALL";
 
-const groupSelect = document.getElementById("groupSelect");
+// Элементы DOM
 const liveChip = document.getElementById("liveChip");
 const searchInput = document.getElementById("searchInput");
 const clearSearchBtn = document.getElementById("clearSearchBtn");
@@ -98,24 +98,22 @@ function findConflict(candidate) {
 
     if (!overlaps) continue;
 
-    if (lesson.group === candidate.group) {
-      return `Конфликт у группы ${candidate.group}: в это время уже идёт ${lesson.title} (${lesson.start}–${lesson.end}).`;
+    if (lesson.room.trim().toLowerCase() === candidate.room.trim().toLowerCase()) {
+      return `Кабинет ${candidate.room} занят в это время (${lesson.start}–${lesson.end}, ${lesson.title}).`;
     }
 
-    if (lesson.room.trim().toLowerCase() === candidate.room.trim().toLowerCase()) {
-      return `Кабинет ${candidate.room} занят группой ${lesson.group} (${lesson.start}–${lesson.end}).`;
-    }
+    return `Пересечение по времени с парой ${lesson.title} (${lesson.start}–${lesson.end}).`;
   }
 
   return null;
 }
 
-function getLiveStatus(groupLessons) {
+function getLiveStatus(lessons) {
   const now = new Date();
   const today = getTodayName();
   const nowMin = now.getHours() * 60 + now.getMinutes();
 
-  const todayList = groupLessons
+  const todayList = lessons
     .filter((l) => l.day === today)
     .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
@@ -136,12 +134,10 @@ function getLiveStatus(groupLessons) {
 }
 
 function renderLessons() {
-  const group = groupSelect.value;
   const query = searchInput.value.trim().toLowerCase();
   clearSearchBtn.classList.toggle("hidden", query.length === 0);
 
-  const groupLessons = state.lessons.filter((l) => l.group === group);
-  const { today, current, next } = getLiveStatus(groupLessons);
+  const { today, current, next } = getLiveStatus(state.lessons);
 
   if (current) {
     liveChip.textContent = `Сейчас: ${current.title} · ${current.room}`;
@@ -165,7 +161,7 @@ function renderLessons() {
     return;
   }
 
-  const visible = groupLessons
+  const visible = state.lessons
     .filter((l) => {
       if (targetDay !== "ALL" && l.day !== targetDay) return false;
       if (!query) return true;
@@ -183,7 +179,7 @@ function renderLessons() {
 
   if (visible.length === 0) {
     const emptyText =
-      groupLessons.length === 0
+      state.lessons.length === 0
         ? "Расписание пустое. Нажмите «+ Добавить пару», чтобы внести занятия."
         : "Ничего не найдено по текущему фильтру.";
     scheduleList.innerHTML = `<div class="g-surface"><p class="g-lesson-meta">${emptyText}</p></div>`;
@@ -219,13 +215,10 @@ function renderLessons() {
 }
 
 function renderExams() {
-  const group = groupSelect.value;
   const midnight = new Date();
   midnight.setHours(0, 0, 0, 0);
 
-  const list = state.exams
-    .filter((e) => e.group === group)
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  const list = [...state.exams].sort((a, b) => new Date(a.date) - new Date(b.date));
 
   if (list.length === 0) {
     examList.innerHTML = `<li class="g-exam-date">Список экзаменов пуст.</li>`;
@@ -297,8 +290,8 @@ function openModal() {
 function closeModal() {
   modalBackdrop.classList.add("hidden");
   addLessonForm.reset();
-  document.getElementById("startTime").value = "00:00";
-  document.getElementById("endTime").value = "00:00";
+  document.getElementById("startTime").value = "08:30";
+  document.getElementById("endTime").value = "10:30";
 }
 
 openAddModalBtn.addEventListener("click", openModal);
@@ -313,7 +306,6 @@ addLessonForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const candidate = {
     id: Date.now(),
-    group: groupSelect.value,
     day: document.getElementById("lessonDay").value,
     start: document.getElementById("startTime").value,
     end: document.getElementById("endTime").value,
@@ -343,7 +335,6 @@ addExamForm.addEventListener("submit", (e) => {
 
   state.exams.push({
     id: Date.now(),
-    group: groupSelect.value,
     title: titleEl.value.trim(),
     date: dateEl.value
   });
@@ -368,8 +359,6 @@ clearSearchBtn.addEventListener("click", () => {
   renderLessons();
   searchInput.focus();
 });
-
-groupSelect.addEventListener("change", render);
 
 setInterval(renderLessons, 60000);
 render();

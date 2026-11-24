@@ -22,14 +22,6 @@
         <span class="g-brand-text">Schedule</span>
         <span class="g-pill-muted" id="liveChip">Нет активных пар</span>
       </div>
-
-      <div class="g-header-actions">
-        <select id="groupSelect" class="g-select-pill" aria-label="Выбор группы">
-          <option value="CS-101">Группа CS-101</option>
-          <option value="CS-102">Группа CS-102</option>
-          <option value="IT-103">Группа IT-103</option>
-        </select>
-      </div>
     </div>
   </header>
 
@@ -85,6 +77,7 @@
     </div>
   </main>
 
+  <!-- Модальное окно добавления пары с проверкой конфликтов -->
   <div class="g-modal-backdrop hidden" id="addModalBackdrop">
     <div class="g-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="g-modal-head">
@@ -106,29 +99,29 @@
           </label>
           <label class="g-field">
             <span>Кабинет</span>
-            <input type="text" id="lessonRoom" placeholder="Например, A101" required />
+            <input type="text" id="lessonRoom" placeholder="Например, G304" required />
           </label>
         </div>
 
         <div class="g-two-col">
           <label class="g-field">
             <span>Начало</span>
-            <input type="time" id="startTime" value="00:00" required />
+            <input type="time" id="startTime" value="08:30" required />
           </label>
           <label class="g-field">
             <span>Окончание</span>
-            <input type="time" id="endTime" value="00:00" required />
+            <input type="time" id="endTime" value="10:30" required />
           </label>
         </div>
 
         <label class="g-field">
           <span>Предмет</span>
-          <input type="text" id="lessonTitle" placeholder="Например, INF106/Лекция или Практика" required />
+          <input type="text" id="lessonTitle" placeholder="Например, CSS105" required />
         </label>
 
         <label class="g-field">
           <span>Преподаватель</span>
-          <input type="text" id="lessonTeacher" placeholder="Например, Aziza Nazarbayeva" required />
+          <input type="text" id="lessonTeacher" placeholder="Например, Aziza" required />
         </label>
 
         <div id="formAlert" class="g-alert hidden"></div>
