@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule — Умное расписание</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="g-header">
+    <div class="g-wrap g-header-row">
+      <div class="g-brand">
+        <span class="g-dots" aria-hidden="true">
+          <i style="background:#4285f4"></i>
+          <i style="background:#ea4335"></i>
+          <i style="background:#fbbc05"></i>
+          <i style="background:#34a853"></i>
+        </span>
+        <span class="g-brand-text">Schedule</span>
+        <span class="g-pill-muted" id="liveChip">Нет активных пар</span>
+      </div>
+
+      <div class="g-header-actions">
+        <select id="groupSelect" class="g-select-pill" aria-label="Выбор группы">
+          <option value="CS-101">Группа CS-101</option>
+          <option value="CS-102">Группа CS-102</option>
+          <option value="IT-103">Группа IT-103</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="g-wrap g-main">
+    <!-- Поисковый блок в стиле Google -->
+    <section class="g-search-hero">
+      <div class="g-search-box">
+        <span class="g-search-icon" aria-hidden="true">⌕</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Найти пару, преподавателя, кабинет или день недели"
+          autocomplete="off"
+        />
+        <button type="button" class="g-clear-btn hidden" id="clearSearchBtn" title="Очистить">✕</button>
+      </div>
+
+      <div class="g-chips" id="dayChips">
+        <button type="button" class="g-chip active" data-day="ALL">Все дни</button>
+        <button type="button" class="g-chip" data-day="TODAY">Сегодня</button>
+        <button type="button" class="g-chip" data-day="Понедельник">Пн</button>
+        <button type="button" class="g-chip" data-day="Вторник">Вт</button>
+        <button type="button" class="g-chip" data-day="Среда">Ср</button>
+        <button type="button" class="g-chip" data-day="Четверг">Чт</button>
+        <button type="button" class="g-chip" data-day="Пятница">Пт</button>
+      </div>
+    </section>
+
+    <div class="g-content-grid">
+      <!-- Список занятий -->
+      <section>
+        <div class="g-section-head">
+          <h2 id="scheduleHeading">Занятия</h2>
+          <button type="button" class="g-btn-primary" id="openAddModalBtn">+ Добавить пару</button>
+        </div>
+        <div id="scheduleList" class="g-lesson-list"></div>
+      </section>
+
+      <!-- Экзамены и дедлайны -->
+      <aside>
+        <div class="g-section-head">
+          <h2>Экзамены</h2>
+        </div>
+        <div class="g-surface">
+          <form id="addExamForm" class="g-exam-inline">
+            <input type="text" id="examTitle" placeholder="Название экзамена" required />
+            <input type="date" id="examDate" required />
+            <button type="submit" class="g-btn-tonal">Добавить</button>
+          </form>
+          <ul id="examList" class="g-exam-list"></ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="g-modal-backdrop hidden" id="addModalBackdrop">
+    <div class="g-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="g-modal-head">
+        <h3 id="modalTitle">Новая пара</h3>
+        <button type="button" class="g-icon-btn" id="closeModalBtn">✕</button>
+      </div>
+
+      <form id="addLessonForm" class="g-form">
+        <div class="g-two-col">
+          <label class="g-field">
+            <span>День недели</span>
+            <select id="lessonDay" required>
+              <option value="Понедельник">Понедельник</option>
+              <option value="Вторник">Вторник</option>
+              <option value="Среда">Среда</option>
+              <option value="Четверг">Четверг</option>
+              <option value="Пятница">Пятница</option>
+            </select>
+          </label>
+          <label class="g-field">
+            <span>Кабинет</span>
+            <input type="text" id="lessonRoom" placeholder="Например, A101" required />
+          </label>
+        </div>
+
+        <div class="g-two-col">
+          <label class="g-field">
+            <span>Начало</span>
+            <input type="time" id="startTime" value="00:00" required />
+          </label>
+          <label class="g-field">
+            <span>Окончание</span>
+            <input type="time" id="endTime" value="00:00" required />
+          </label>
+        </div>
+
+        <label class="g-field">
+          <span>Предмет</span>
+          <input type="text" id="lessonTitle" placeholder="Например, INF106/Лекция или Практика" required />
+        </label>
+
+        <label class="g-field">
+          <span>Преподаватель</span>
+          <input type="text" id="lessonTeacher" placeholder="Например, Aziza Nazarbayeva" required />
+        </label>
+
+        <div id="formAlert" class="g-alert hidden"></div>
+
+        <div class="g-modal-actions">
+          <button type="button" class="g-link-btn" id="cancelModalBtn">Отмена</button>
+          <button type="submit" class="g-btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
